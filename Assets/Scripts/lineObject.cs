@@ -29,7 +29,6 @@ public class lineObject : MonoBehaviour {
 	void touch(){
 		Vector2 screenPoint=Input.mousePosition;
 		Vector2 worldPoint=Camera.main.ScreenToWorldPoint(screenPoint);
-		Debug.Log(worldPoint);
 
 		lineRenderer.enabled=true;
 		lineRenderer.SetVertexCount(lineIndex);

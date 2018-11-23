@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ChickenMove : MonoBehaviour {
 	public float speed=-1f;
-	private float direction=1f;
 	
 	// Use this for initialization
 	void Start () {
@@ -15,7 +14,7 @@ public class ChickenMove : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Vector2 scale=transform.localScale;
-		if(transform.position.x<=56f||transform.position.x>=230f){
+		if(transform.position.x<=-31f||transform.position.x>=138f){
 			speed*=-1;
 			scale.x*=-1;
 		}
