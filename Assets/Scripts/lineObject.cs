@@ -12,7 +12,6 @@ public class lineObject : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		lineRenderer=GetComponent<LineRenderer>();
-		Debug.Log(lineRenderer);
 		lineRenderer.enabled=false;
 	}
 	

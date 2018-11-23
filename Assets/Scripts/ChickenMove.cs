@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ChickenMove : MonoBehaviour {
 	public float speed=-1f;
-	
+	public bool stayInCamera=false;
 	// Use this for initialization
 	void Start () {
 		
@@ -20,5 +20,15 @@ public class ChickenMove : MonoBehaviour {
 		}
 		transform.localScale = scale;
 		transform.position=new Vector2(transform.position.x+speed*Time.deltaTime,transform.position.y);
+	}
+	void OnTriggerStay2D(Collider2D other) {
+		if(other.gameObject.tag=="Cube"){
+			stayInCamera=true;
+		}			
+	}
+	void OnTriggerExit2D(Collider2D other) {
+		if(other.gameObject.tag=="Cube"){
+			stayInCamera=false;
+		}			
 	}
 }

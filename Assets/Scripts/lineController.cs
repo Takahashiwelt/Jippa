@@ -16,12 +16,15 @@ public class lineController : MonoBehaviour {
 		}
 		
 		if(Input.GetMouseButtonUp(0)){
-			Debug.Log(IsCircle(lines[0]));
+			if(IsCircle(lines[0])==true){
+				calcChicken();
+			}
 			for(int i=0;i<lines.Count;i++){
 				Destroy(lines[i]);
 			}
 			lines.Clear();
 		}
+		if(Input.GetKeyDown("space"))calcChicken();
 		
 	}
 	struct Senbun{
@@ -32,9 +35,10 @@ public class lineController : MonoBehaviour {
 			this.p2=p2;
 		}
 	}
-	bool IsCircle(GameObject line){
+	private List<Senbun> circle=new List<Senbun>();//円を構成する線分
+	bool IsCircle(GameObject line){//引いた線が閉じているか
 		int count=line.GetComponent<LineRenderer>().positionCount;
-		Debug.Log(count);
+		//Debug.Log(count);
 		Vector3[] positions=new Vector3[count];
 		List<Senbun> senbun=new List<Senbun>();
 		for(int i=0;i<count;i++){//連続する2点の線分を格納する
@@ -51,7 +55,6 @@ public class lineController : MonoBehaviour {
 		for(int i=0;i<senbun.Count;i++){//それぞれの線分が重なっているか判定する
 			if(i>=1){
 				for(int j=0;j<i;j++){
-					Debug.Log("i="+i+":j="+j);
 					calCount++;
 					Vector2 p1=senbun[j].p1;
 					Vector2 p2=senbun[j].p2;
@@ -74,12 +77,40 @@ public class lineController : MonoBehaviour {
     				{
     				    continue;
     				}
-					Debug.Log("Cross! ("+p1+":"+p2+")("+p3+":"+p4+")");
+					Debug.Log("Cross! "+j+":"+i);
+					for(int n=j;n<=i;n++){//閉じた円の部分を取り出す
+						circle.Add(senbun[n]);
+					}
 					return true;
 				}
 			}
 		}
-		Debug.Log("count is "+calCount);
 		return false;
+	}
+
+	public int calcChicken(){
+		int chickenNum=0;
+		GameObject[] chickens=GameObject.FindGameObjectsWithTag("Chicken");
+		chickenNum=chickens.Length;
+
+
+		for(int i=0;i<chickenNum;i++){
+			ChickenMove cm=chickens[i].GetComponent<ChickenMove>();
+			if(cm.stayInCamera==true){
+				Ray2D ray=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));
+
+  				//Rayの長さ
+				float maxDistance = 50;
+
+				RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, maxDistance);
+				if(hit.collider.gameObject.tag=="Line"){
+					Debug.Log("Checken in the circle!!!");
+				}
+				Debug.DrawRay (ray.origin, ray.direction*50f, Color.red, 10f, false);
+			}
+		}
+
+		Debug.Log("chicken is "+chickenNum);
+		return chickenNum;
 	}
 }
