@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PolygonCollider2D))]
 public class lineController : MonoBehaviour {
 
 	public GameObject lineObject;
+	private GameObject cube;
+	private BoxCollider2D cubeCollider;
 	private List<GameObject> lines=new List<GameObject>();
+	void Start(){
+		cube=GameObject.Find("Cube");
+		cubeCollider=cube.GetComponent<BoxCollider2D>();
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -36,14 +43,19 @@ public class lineController : MonoBehaviour {
 		}
 	}
 	private List<Senbun> circle=new List<Senbun>();//円を構成する線分
+
+	private Vector2[] points;
+	private int count;
 	bool IsCircle(GameObject line){//引いた線が閉じているか
-		int count=line.GetComponent<LineRenderer>().positionCount;
+		count=line.GetComponent<LineRenderer>().positionCount;
 		//Debug.Log(count);
 		Vector3[] positions=new Vector3[count];
+		points=new Vector2[count];
 		List<Senbun> senbun=new List<Senbun>();
 		for(int i=0;i<count;i++){//連続する2点の線分を格納する
 			positions[i]=line.GetComponent<LineRenderer>().GetPosition(i);
-			
+			points[i]=new Vector2(positions[i].x,positions[i].y);
+
 			if(i>=1){
 				Vector2 q1=new Vector2(positions[i-1].x,positions[i-1].y);
 				Vector2 q2=new Vector2(positions[i].x,positions[i].y);
@@ -88,29 +100,50 @@ public class lineController : MonoBehaviour {
 		return false;
 	}
 
+	public List<GameObject> chickenInCircle;
 	public int calcChicken(){
+		chickenInCircle=new List<GameObject>();
+
+		cubeCollider.enabled=false;//linesのcolliderと衝突するので処理が終わるまで消す
 		int chickenNum=0;
 		GameObject[] chickens=GameObject.FindGameObjectsWithTag("Chicken");
 		chickenNum=chickens.Length;
-
+		lines[0].GetComponent<PolygonCollider2D>().points=points;
 
 		for(int i=0;i<chickenNum;i++){
 			ChickenMove cm=chickens[i].GetComponent<ChickenMove>();
-			if(cm.stayInCamera==true){
-				Ray2D ray=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));
+			Debug.Log(cm.stayInCamera);
+			//if(cm.stayInCamera==true){//ニワトリが画面内にいたら
+				float maxDistance = 200f;
 
-  				//Rayの長さ
-				float maxDistance = 50;
-
-				RaycastHit2D hit = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction, maxDistance);
-				if(hit.collider.gameObject.tag=="Line"){
-					Debug.Log("Checken in the circle!!!");
+				Ray2D rayR=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));//Ray(右方向)
+				RaycastHit2D hitR = Physics2D.Raycast((Vector2)rayR.origin, (Vector2)rayR.direction, maxDistance);
+				//Debug.DrawRay(rayR.origin, rayR.direction*maxDistance, Color.red, 1f, false);
+				if(hitR.collider.gameObject.tag=="Line"){
+					Ray2D rayL=new Ray2D(chickens[i].transform.position,new Vector2(-1f,0f));//Ray(左方向)
+					RaycastHit2D hitL = Physics2D.Raycast((Vector2)rayL.origin, (Vector2)rayL.direction, maxDistance);
+					//Debug.DrawRay(rayL.origin, rayL.direction*maxDistance, Color.red, 1f, false);
+					if(hitL.collider.gameObject.tag=="Line"){
+						Ray2D rayU=new Ray2D(chickens[i].transform.position,new Vector2(0f,1f));//Ray(上方向)
+						RaycastHit2D hitU = Physics2D.Raycast((Vector2)rayU.origin, (Vector2)rayU.direction, maxDistance);
+						//Debug.DrawRay(rayU.origin, rayU.direction*maxDistance, Color.red, 1f, false);
+						if(hitU.collider.gameObject.tag=="Line"){
+							Ray2D rayD=new Ray2D(chickens[i].transform.position,new Vector2(0f,-1f));//Ray(下方向)
+							RaycastHit2D hitD = Physics2D.Raycast((Vector2)rayD.origin, (Vector2)rayD.direction, maxDistance);
+							//Debug.DrawLine(rayD.origin, rayD.direction*maxDistance, Color.red, 1f, false);
+							if(hitD.collider.gameObject.tag=="Line"){
+								chickenInCircle.Add(chickens[i]);
+							}
+						}
+					}
 				}
-				Debug.DrawRay (ray.origin, ray.direction*50f, Color.red, 10f, false);
-			}
+			//}
 		}
+		Destroy(lines[0].GetComponent<PolygonCollider2D>());
+		cubeCollider.enabled=true;//処理が終わったので衝突判定をアクティブに
+		
 
-		Debug.Log("chicken is "+chickenNum);
-		return chickenNum;
+		Debug.Log(chickenInCircle.Count+" chicken(s) in circle!");
+		return chickenInCircle.Count;
 	}
 }
