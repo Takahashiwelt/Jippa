@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ChickenMove : MonoBehaviour {
-	public float speed=-1f;
+	
+	public int direction=1;
+	public float speed=1;
 	public bool stayInCamera=false;
 	// Use this for initialization
+	private Vector2 scale;
 	void Start () {
-		
-		
+		Vector2 scale=transform.localScale*direction;
 	}
 	
 	// Update is called once per frame
+	
 	void Update () {
-		Vector2 scale=transform.localScale;
-		if(transform.position.x<=-31f||transform.position.x>=138f){
+		scale=transform.localScale;
+		if(transform.position.x<=-37f||transform.position.x>=138f){
 			speed*=-1;
 			scale.x*=-1;
 		}

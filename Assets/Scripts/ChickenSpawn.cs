@@ -11,8 +11,8 @@ public class ChickenSpawn : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	int n=0;
-	float timeOut=0.5f;
+	public int n=0;
+	float timeOut=0.1f;
 	float timeElapsed=0f;
 	void Update () {
 		timeElapsed+=Time.deltaTime;
@@ -26,10 +26,21 @@ public class ChickenSpawn : MonoBehaviour {
 	}
 	void Spawn(){
 		
-		float y = Random.Range(-20.0f,90.0f);
-		GameObject spawnedChicken = Instantiate(chicken,new Vector2(126f,y),Quaternion.identity);
+		float y = Random.Range(-14.0f,79.0f);
+		float spawnX;
+		int direction=1;
+		if(Random.Range(-1,1)>=0){
+			spawnX=126f;
+			direction=1;
+		}else{
+			spawnX=-36f;
+			direction=-1;
+		}
+		GameObject spawnedChicken = Instantiate(chicken,new Vector2(spawnX,y),Quaternion.identity);
 		ChickenMove cm=spawnedChicken.GetComponent<ChickenMove>();
-		cm.speed=Random.Range(-8f,-12f);	
+		cm.speed=Random.Range(-8f,-15f);
+		cm.direction=direction;
+
 		
 	}
 }

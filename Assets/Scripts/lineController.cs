@@ -9,9 +9,16 @@ public class lineController : MonoBehaviour {
 	private GameObject cube;
 	private BoxCollider2D cubeCollider;
 	private List<GameObject> lines=new List<GameObject>();
+	private GameObject mCamera;
+	private Score sc;
+	private GameObject spawn;
 	void Start(){
 		cube=GameObject.Find("Cube");
 		cubeCollider=cube.GetComponent<BoxCollider2D>();
+		mCamera=GameObject.Find("Canvas/Text");
+		sc=mCamera.GetComponent<Score>();
+
+		spawn=GameObject.Find("Spawn");
 	}
 	
 	// Update is called once per frame
@@ -101,6 +108,7 @@ public class lineController : MonoBehaviour {
 	}
 
 	public List<GameObject> chickenInCircle;
+	private int score;
 	public int calcChicken(){
 		chickenInCircle=new List<GameObject>();
 
@@ -142,8 +150,26 @@ public class lineController : MonoBehaviour {
 		Destroy(lines[0].GetComponent<PolygonCollider2D>());
 		cubeCollider.enabled=true;//処理が終わったので衝突判定をアクティブに
 		
+		score=chickenInCircle.Count;
+		CalcScore(score);
+		Debug.Log(score+" chicken(s) in circle!");
+		for(int i=0;i<score;i++){
+			Destroy(chickenInCircle[i]);
+		}
+		ChickenSpawn cs=spawn.GetComponent<ChickenSpawn>();
+		cs.n-=score;
 
-		Debug.Log(chickenInCircle.Count+" chicken(s) in circle!");
 		return chickenInCircle.Count;
+	}
+	
+	private int calcedScore=0;
+	void CalcScore(int score){
+		calcedScore=score;
+		if(score==10){
+			calcedScore=50;
+		}
+		
+		sc.score+=calcedScore;
+
 	}
 }

@@ -12,8 +12,8 @@ public class Movement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		velocity.x=Input.GetAxisRaw("Horizontal")*30.0f;
-		velocity.y=Input.GetAxisRaw("Vertical")*30.0f;
+		velocity.x=Input.GetAxisRaw("Horizontal")*50.0f;
+		velocity.y=Input.GetAxisRaw("Vertical")*50.0f;
 	}
 	void FixedUpdate(){
 		rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
