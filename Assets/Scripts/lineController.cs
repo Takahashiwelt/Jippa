@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(PolygonCollider2D))]
 public class lineController : MonoBehaviour {
@@ -12,33 +13,52 @@ public class lineController : MonoBehaviour {
 	private GameObject mCamera;
 	private Score sc;
 	private GameObject spawn;
+	private StartScene sscene;
+	private AudioSource[] audioSource;
+	public AudioClip karaage;
+	public AudioClip niceJippa;
+	public AudioClip bgm;
+	
 	void Start(){
 		cube=GameObject.Find("Cube");
 		cubeCollider=cube.GetComponent<BoxCollider2D>();
 		mCamera=GameObject.Find("Canvas/Text");
 		sc=mCamera.GetComponent<Score>();
-
 		spawn=GameObject.Find("Spawn");
+		sscene=GameObject.Find("Start").GetComponent<StartScene>();
+
+		audioSource = gameObject.GetComponents<AudioSource>();
+        audioSource[0].clip = karaage;
+		audioSource[1].clip=niceJippa;
+		audioSource[2].clip=bgm;
+		audioSource[2].Play();
+
 	}
 	
 	// Update is called once per frame
+	private float time=0;
 	void Update () {
-		if(Input.GetMouseButton(0)){
+		if(Input.GetMouseButton(0)&&sscene.GameEnd==false){
 			GameObject line= Instantiate(lineObject,new Vector2(transform.position.x,transform.position.y),Quaternion.identity);
 			line.transform.parent = this.transform;
 			lines.Add(line);
 		}
 		
-		if(Input.GetMouseButtonUp(0)){
+		if(Input.GetMouseButtonUp(0)&&sscene.GameEnd==false){
 			if(IsCircle(lines[0])==true){
-				calcChicken();
+				audioSource[0].Play();
+				int countC = calcChicken();
+				if(countC==10){
+					audioSource[1].Play();
+				}
 			}
 			for(int i=0;i<lines.Count;i++){
 				Destroy(lines[i]);
 			}
 			lines.Clear();
 		}
-		if(Input.GetKeyDown("space"))calcChicken();
+		
+		
 		
 	}
 	struct Senbun{
@@ -120,14 +140,14 @@ public class lineController : MonoBehaviour {
 
 		for(int i=0;i<chickenNum;i++){
 			ChickenMove cm=chickens[i].GetComponent<ChickenMove>();
-			Debug.Log(cm.stayInCamera);
+			//Debug.Log(cm.stayInCamera);
 			//if(cm.stayInCamera==true){//ニワトリが画面内にいたら
 				float maxDistance = 200f;
 
 				Ray2D rayR=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));//Ray(右方向)
 				RaycastHit2D hitR = Physics2D.Raycast((Vector2)rayR.origin, (Vector2)rayR.direction, maxDistance);
 				//Debug.DrawRay(rayR.origin, rayR.direction*maxDistance, Color.red, 1f, false);
-				if(hitR.collider.gameObject.tag=="Line"){
+				if(hitR!=null&&hitR.collider.gameObject.tag=="Line"){
 					Ray2D rayL=new Ray2D(chickens[i].transform.position,new Vector2(-1f,0f));//Ray(左方向)
 					RaycastHit2D hitL = Physics2D.Raycast((Vector2)rayL.origin, (Vector2)rayL.direction, maxDistance);
 					//Debug.DrawRay(rayL.origin, rayL.direction*maxDistance, Color.red, 1f, false);
@@ -172,4 +192,22 @@ public class lineController : MonoBehaviour {
 		sc.score+=calcedScore;
 
 	}
+	/*
+	void WaEffect(){
+		time=0;
+		Font font;
+		if(score==10){
+			font=Resources.Load<Font>("Fonts/YAKITORI");
+			waSuu.font=font;
+			waSuu.text="ジッパ！";
+		}else{
+			font=Resources.Load<Font>("Arial");
+			waSuu.font=font;
+			waSuu.text=score+"羽";
+		}
+		howmany.SetActive(true);
+		
+
+	}
+	*/
 }

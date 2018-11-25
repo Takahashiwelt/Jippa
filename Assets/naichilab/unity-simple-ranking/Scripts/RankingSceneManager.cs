@@ -51,7 +51,7 @@ namespace naichilab
 
 		void Start ()
 		{
-			this.sendScoreButton.enabled = false;
+			this.sendScoreButton.interactable = false;
 
 			StartCoroutine (GetHighScoreAndRankingBoard ());
 		}
@@ -87,17 +87,17 @@ namespace naichilab
 
 			//スコア更新している場合、ボタン有効化
 			if (this.highScoreSpreadSheetObject == null) {
-				this.sendScoreButton.enabled = true;
+				this.sendScoreButton.interactable = true;
 			} else {
 				var highScore = RankingLoader.Instance.BuildScore (this.highScoreSpreadSheetObject ["hiscore"].ToString ());
 				var score = RankingLoader.Instance.Score;
 
 				if (RankingLoader.Instance.setting.Order == ScoreOrder.OrderByAscending) {
 					//数値が低い方が高スコア
-					this.sendScoreButton.enabled = score.Value < highScore.Value;
+					this.sendScoreButton.interactable = score.Value < highScore.Value;
 				} else {
 					//数値が高い方が高スコア
-					this.sendScoreButton.enabled = highScore.Value < score.Value;
+					this.sendScoreButton.interactable = highScore.Value < score.Value;
 				}
 			}
 		}
@@ -110,7 +110,7 @@ namespace naichilab
 
 		private IEnumerator SendScoreEnumerator ()
 		{
-			this.sendScoreButton.enabled = false;
+			this.sendScoreButton.interactable = false;
 			this.highScoreLabel.text = "送信中...";
 
 			//ハイスコア送信
@@ -191,8 +191,9 @@ namespace naichilab
 
 		public void OnCloseButtonClick ()
 		{
-			this.closeButton.enabled = false;
+			this.closeButton.interactable = false;
 			UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync ("Ranking");
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("Title");
 		}
 
 		private void MaskOffOn ()

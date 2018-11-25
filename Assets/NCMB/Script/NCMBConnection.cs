@@ -131,7 +131,7 @@ namespace NCMB.Internal
 
 		private void _Connection (object callback)
 		{
-			GameObject gameObj = GameObject.Find ("NCMBSettings");
+			GameObject gameObj = GameObject.Find ("Canvas/NCMBSettings");
 			NCMBSettings settings = gameObj.GetComponent<NCMBSettings> ();
 			settings.Connection (this, callback);
 		}

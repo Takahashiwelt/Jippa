@@ -10,14 +10,13 @@ public class ChickenMove : MonoBehaviour {
 	// Use this for initialization
 	private Vector2 scale;
 	void Start () {
-		Vector2 scale=transform.localScale*direction;
 	}
 	
 	// Update is called once per frame
 	
 	void Update () {
 		scale=transform.localScale;
-		if(transform.position.x<=-37f||transform.position.x>=138f){
+		if(transform.position.x<=-37f||transform.position.x>=132f){
 			speed*=-1;
 			scale.x*=-1;
 		}
