@@ -38,6 +38,7 @@ public class lineController : MonoBehaviour {
 	// Update is called once per frame
 	private float time=0;
 	void Update () {
+		Debug.Log(Camera.main.ViewportToWorldPoint(Vector2.zero));
 		if(Input.GetMouseButton(0)&&sscene.GameEnd==false){
 			GameObject line= Instantiate(lineObject,new Vector2(transform.position.x,transform.position.y),Quaternion.identity);
 			line.transform.parent = this.transform;
@@ -139,33 +140,38 @@ public class lineController : MonoBehaviour {
 		lines[0].GetComponent<PolygonCollider2D>().points=points;
 
 		for(int i=0;i<chickenNum;i++){
-			ChickenMove cm=chickens[i].GetComponent<ChickenMove>();
-			//Debug.Log(cm.stayInCamera);
-			//if(cm.stayInCamera==true){//ニワトリが画面内にいたら
-				float maxDistance = 200f;
+			Vector3 camera0pos=Camera.main.ViewportToWorldPoint(Vector2.zero);
+			Vector3 camera1pos=Camera.main.ViewportToWorldPoint(Vector2.one);
+ 			if(chickens[i].transform.position.x>=camera0pos.x&&chickens[i].transform.position.x<=camera1pos.x
+			 	&&chickens[i].transform.position.y>=camera0pos.y&&chickens[i].transform.position.y<=camera1pos.y){
+				ChickenMove cm=chickens[i].GetComponent<ChickenMove>();
+				//Debug.Log(cm.stayInCamera);
+				//if(cm.stayInCamera==true){//ニワトリが画面内にいたら
+					float maxDistance = 100f;
 
-				Ray2D rayR=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));//Ray(右方向)
-				RaycastHit2D hitR = Physics2D.Raycast((Vector2)rayR.origin, (Vector2)rayR.direction, maxDistance);
-				//Debug.DrawRay(rayR.origin, rayR.direction*maxDistance, Color.red, 1f, false);
-				if(hitR!=null&&hitR.collider.gameObject.tag=="Line"){
-					Ray2D rayL=new Ray2D(chickens[i].transform.position,new Vector2(-1f,0f));//Ray(左方向)
-					RaycastHit2D hitL = Physics2D.Raycast((Vector2)rayL.origin, (Vector2)rayL.direction, maxDistance);
-					//Debug.DrawRay(rayL.origin, rayL.direction*maxDistance, Color.red, 1f, false);
-					if(hitL.collider.gameObject.tag=="Line"){
-						Ray2D rayU=new Ray2D(chickens[i].transform.position,new Vector2(0f,1f));//Ray(上方向)
-						RaycastHit2D hitU = Physics2D.Raycast((Vector2)rayU.origin, (Vector2)rayU.direction, maxDistance);
-						//Debug.DrawRay(rayU.origin, rayU.direction*maxDistance, Color.red, 1f, false);
-						if(hitU.collider.gameObject.tag=="Line"){
-							Ray2D rayD=new Ray2D(chickens[i].transform.position,new Vector2(0f,-1f));//Ray(下方向)
-							RaycastHit2D hitD = Physics2D.Raycast((Vector2)rayD.origin, (Vector2)rayD.direction, maxDistance);
-							//Debug.DrawLine(rayD.origin, rayD.direction*maxDistance, Color.red, 1f, false);
-							if(hitD.collider.gameObject.tag=="Line"){
-								chickenInCircle.Add(chickens[i]);
+					Ray2D rayR=new Ray2D(chickens[i].transform.position,new Vector2(1f,0f));//Ray(右方向)
+					RaycastHit2D hitR = Physics2D.Raycast((Vector2)rayR.origin, (Vector2)rayR.direction, maxDistance);
+					//Debug.DrawRay(rayR.origin, rayR.direction*maxDistance, Color.red, 1f, false);
+					if(hitR.collider!=null&&hitR.collider.gameObject.tag=="Line"){
+						Ray2D rayL=new Ray2D(chickens[i].transform.position,new Vector2(-1f,0f));//Ray(左方向)
+						RaycastHit2D hitL = Physics2D.Raycast((Vector2)rayL.origin, (Vector2)rayL.direction, maxDistance);
+						//Debug.DrawRay(rayL.origin, rayL.direction*maxDistance, Color.red, 1f, false);
+						if(hitL.collider!=null&&hitL.collider.gameObject.tag=="Line"){
+							Ray2D rayU=new Ray2D(chickens[i].transform.position,new Vector2(0f,1f));//Ray(上方向)
+							RaycastHit2D hitU = Physics2D.Raycast((Vector2)rayU.origin, (Vector2)rayU.direction, maxDistance);
+							//Debug.DrawRay(rayU.origin, rayU.direction*maxDistance, Color.red, 1f, false);
+							if(hitU.collider!=null&&hitU.collider.gameObject.tag=="Line"){
+								Ray2D rayD=new Ray2D(chickens[i].transform.position,new Vector2(0f,-1f));//Ray(下方向)
+								RaycastHit2D hitD = Physics2D.Raycast((Vector2)rayD.origin, (Vector2)rayD.direction, maxDistance);
+								//Debug.DrawLine(rayD.origin, rayD.direction*maxDistance, Color.red, 1f, false);
+								if(hitD.collider!=null&&hitD.collider.gameObject.tag=="Line"){
+									chickenInCircle.Add(chickens[i]);
+								}
 							}
 						}
 					}
-				}
-			//}
+				//}
+			}
 		}
 		Destroy(lines[0].GetComponent<PolygonCollider2D>());
 		cubeCollider.enabled=true;//処理が終わったので衝突判定をアクティブに

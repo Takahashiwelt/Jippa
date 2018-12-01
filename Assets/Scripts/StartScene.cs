@@ -23,7 +23,7 @@ public class StartScene : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		totalTime -= Time.deltaTime;
-		seconds = (int)totalTime;
+		if(GameEnd==false)seconds = (int)totalTime;
 		timerText.text= seconds.ToString();
 		if(totalTime<=0&&GameEnd==false){
 			audioSource.Play();
